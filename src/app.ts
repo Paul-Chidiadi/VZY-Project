@@ -53,7 +53,6 @@ app.use(hpp({}));
 
 // Define index route
 app.get("/", async (req: Request, res: Response) => {
-  // res.render('index');
   res.contentType("json");
   res.json({ status: "ok", message: "Welcome to VZY-Project" });
 });
