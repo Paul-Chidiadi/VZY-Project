@@ -41,4 +41,40 @@ export default class AuthService {
       new AppError("Email address already exist", statusCode.conflict())
     );
   }
+
+  public async login(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<IUser | void> {
+    const { email, password } = req.body;
+    const user = await userRepository.findUserByEmail(email);
+    if (!user) {
+      return next(
+        new AppError(
+          "Incorrect Email or password",
+          statusCode.unprocessableEntity()
+        )
+      );
+    }
+    //Compare passowrds
+    const hashedPassword = await util.comparePassword(password, user.password);
+    if (hashedPassword) {
+      const { accessToken, refreshToken } = await util.generateToken(
+        user.email
+      );
+      // We can chooose to send a mail to the user email on successful login attempt
+      res.status(statusCode.accepted()).json({
+        success: true,
+        message: "Login successful",
+        accessToken,
+        refreshToken,
+        user,
+      });
+    } else {
+      return next(
+        new AppError("Incorrect password", statusCode.accessForbidden())
+      );
+    }
+  }
 }

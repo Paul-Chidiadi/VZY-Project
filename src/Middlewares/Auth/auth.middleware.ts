@@ -26,3 +26,17 @@ export const signUpValidationRules = () => {
     body("email").trim().isEmail().withMessage("please enter a valid Email"),
   ];
 };
+
+export const loginValidationRules = () => {
+  return [
+    body("email").trim().isEmail().withMessage("please enter a valid Email"),
+    body("password")
+      .trim()
+      .notEmpty()
+      .withMessage("Password can not be empty")
+      .isLength({ min: 6, max: 16 })
+      .withMessage(
+        "Password must be between min of 6 and max of 16 characters"
+      ),
+  ];
+};
